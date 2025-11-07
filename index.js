@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let list = [
   {
     id: 1,
@@ -43,24 +45,40 @@ app.get("/info", (req, res) => {
   res.send(message);
 });
 
-app.get('/api/persons/:id', (req, res) =>{
-    const id = Number(req.params.id)
+app.get("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
 
-    const contact = list.find(item => item.id === id)
+  const contact = list.find((item) => item.id === id);
 
-    if(!contact) return res.status(404).send(`The person with id ${id} is not found.`)
-    res.send(contact)
-})
+  if (!contact)
+    return res.status(404).send(`The person with id ${id} is not found.`);
+  res.send(contact);
+});
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
+app.delete("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
 
-    const person = list.find(item => item.id === id)
-    if(!person) return res.status(404).send(`The person with id ${id} is not found.`)
-    
-    list = list.filter(item => item.id !== id)
-    res.status(204).end()
-})
+  const person = list.find((item) => item.id === id);
+  if (!person)
+    return res.status(404).send(`The person with id ${id} is not found.`);
+
+  list = list.filter((item) => item.id !== id);
+  res.status(204).end();
+});
+
+app.post("/api/persons", (req, res) => {
+  const id = Math.round(Math.random() * 100000);
+
+  const contact = {
+    id,
+    name: req.body.name,
+    number: req.body.number,
+  };
+
+  list = [...list, contact];
+
+  res.send(contact);
+});
 
 const PORT = 3001;
 app.listen(PORT, () => {
