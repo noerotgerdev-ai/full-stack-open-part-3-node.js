@@ -69,6 +69,15 @@ app.delete("/api/persons/:id", (req, res) => {
 app.post("/api/persons", (req, res) => {
   const id = Math.round(Math.random() * 100000);
 
+  if (!req.body.name)
+    return res.status(400).send({ error: "name is required" });
+  if (!req.body.number)
+    return res.status(400).send({ error: "number is required" });
+
+  const checkName = list.find((item) => item.name === req.body.name);
+
+  if (checkName) return res.status(400).send({ error: "name must be unique" });
+
   const contact = {
     id,
     name: req.body.name,
@@ -76,7 +85,6 @@ app.post("/api/persons", (req, res) => {
   };
 
   list = [...list, contact];
-
   res.send(contact);
 });
 
