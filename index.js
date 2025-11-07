@@ -32,6 +32,18 @@ app.get('/api/persons', (req, res) => {
     res.json(list)
 })
 
+app.get('/info', (req, res) => {
+    const contacts = list.length
+    const date = new Date()
+
+    const message = `
+    <p>Phonebook has info for ${contacts} people</p>
+    <p>${date}</p>
+    `
+
+    res.send(message)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`App running in http://localhost:${PORT}`)
