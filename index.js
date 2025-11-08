@@ -1,10 +1,18 @@
 const express = require("express");
-const morgan = require('morgan')
+const morgan = require("morgan");
 
 const app = express();
-
 app.use(express.json());
-app.use(morgan('tiny'))
+
+morgan.token("msg", function (req) {
+  const message = JSON.stringify(req.body);
+  if (!message) return;
+  return message;
+});
+
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :msg")
+);
 
 let list = [
   {
@@ -30,11 +38,11 @@ let list = [
 ];
 
 app.get("/", (req, res) => {
-  res.send("<h1>Node.js APP</h1>");
+  res.status(200).send("<h1>Node.js APP is working</h1>");
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(list);
+  res.status(200).json(list);
 });
 
 app.get("/info", (req, res) => {
@@ -45,7 +53,7 @@ app.get("/info", (req, res) => {
     <p>${date}</p>
     `;
 
-  res.send(message);
+  res.status(200).send(message);
 });
 
 app.get("/api/persons/:id", (req, res) => {
@@ -55,7 +63,7 @@ app.get("/api/persons/:id", (req, res) => {
 
   if (!contact)
     return res.status(404).send(`The person with id ${id} is not found.`);
-  res.send(contact);
+  res.status(200).json(contact);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -88,7 +96,7 @@ app.post("/api/persons", (req, res) => {
   };
 
   list = [...list, contact];
-  res.send(contact);
+  res.status(201).json(contact);
 });
 
 const PORT = 3001;
